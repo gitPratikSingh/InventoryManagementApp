@@ -40,14 +40,14 @@
                   return '<a href="'+mdb.basePath+'/equipment/edit/'+data.id+'">Edit</a> - <a href="# Del" item-id="'+data.id+'" class="delete-record" onclick="confirm(\'Do you want to delete this record?\')">Delete</a>';
                 }
             },
-            {data: 'equipment_name'     , name: 'mdb_equipment.equipment_name'},
+            {data: 'equipment_name'     , name: 'equipment.equipment_name'},
             {data: 'type_name'          , name: 'db_type.name'},
-            {data: 'serial_number'      , name: 'mdb_equipment.serial_number'},
-            {data: 'cams'               , name: 'mdb_equipment.cams'},
+            {data: 'serial_number'      , name: 'equipment.serial_number'},
+            {data: 'cams'               , name: 'equipment.cams'},
             {data: 'make_name'          , name: 'db_make.name'},
             {data: 'model_name'         , name: 'db_model.name'},
             {data: 'building_name'      , name: 'db_building.name'},
-            {data: 'room'               , name: 'mdb_equipment.room'},
+            {data: 'room'               , name: 'equipment.room'},
             {data: 'group_name'         , name: 'db_groups.name'},
             //{data: 'warranty'           , name: 'mdb_equipment.warranty'},
             {
@@ -57,8 +57,8 @@
                     return Math.round(data.warranty);
                 }
             },
-            {data: 'created_at'         , name: 'mdb_equipment.created_at'},
-            {data: 'updated_at'         , name: 'mdb_equipment.updated_at'},
+            {data: 'created_at'         , name: 'equipment.created_at'},
+            {data: 'updated_at'         , name: 'equipment.updated_at'},
             {
                 data:       'os_name', 
                 name:       'db_computer.os_name',

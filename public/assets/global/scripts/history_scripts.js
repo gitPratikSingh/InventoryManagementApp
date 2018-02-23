@@ -27,12 +27,12 @@
                     "data":           null,
                     "defaultContent": '<img src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-arrow-right-b-128.png" width="20px;">'
                 },
-                {data: 'item_id'            , name: 'mdb_history.item_id'},
+                {data: 'item_id'            , name: 'history.item_id'},
                 {data: 'unity_id'           , name: 'db_user.unity_id'},
-                {data: 'screen'             , name: 'mdb_history.screen'},
-                {data: 'field'              , name: 'mdb_history.field'},
-                {data: 'action'             , name: 'mdb_history.action'},
-                {data: 'created_at'         , name: 'mdb_history.created_at'},
+                {data: 'screen'             , name: 'history.screen'},
+                {data: 'field'              , name: 'history.field'},
+                {data: 'action'             , name: 'history.action'},
+                {data: 'created_at'         , name: 'history.created_at'},
 
             ],
             initComplete: function () {

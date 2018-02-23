@@ -17,7 +17,7 @@
               "data" : {
                   "action" : 'get'
               },
-              "dataType": "json",
+              "dataType": "application/json",
               "type": "POST",
               "async": false,
               "success": function (json) {
@@ -41,7 +41,7 @@
                   "state"  : data,
                   "action" : 'save'
               },
-              "dataType": "json",
+              "dataType": "application/json",
               "type": "POST",
               "success": function () {}
             } );
@@ -121,7 +121,7 @@
             {
                 "className":      'datatable-center-item',
                 "data":           null,
-                "name":           'mdb_equipment.active',
+                "name":           'equipment.active',
                 "render":         function ( data, type, full, meta ) {
                     return data.active==1?'<i class="fa fa-thumbs-up font-green" title="Active">':'<i class="fa fa-thumbs-down font-red" title="Inactive">';
                 }
@@ -130,27 +130,27 @@
                 "className":      'datatable-center-item',
                 "data":           null,
                 "visible":        false,
-                "name":           'mdb_equipment.surplused',
+                "name":           'equipment.surplused',
                 "render":         function ( data, type, full, meta ) {
                     return data.surplused==1?'<i class="fa fa-trash font-red" title="Surplused">':'<i class="fa fa-trash font-green" title="Not Surplused">';
                 }
             },
             {data: 'type_name'          , name: 'db_type.name'},
-            {data: 'equipment_name'     , name: 'mdb_equipment.equipment_name'},
+            {data: 'equipment_name'     , name: 'equipment.equipment_name'},
             {data: 'make_and_model'     , name: 'make_and_model'},
-            {data: 'serial_number'      , name: 'mdb_equipment.serial_number'},
+            {data: 'serial_number'      , name: 'equipment.serial_number'},
             {data: 'location'           , name: 'location'},
             {data: 'group_name'         , name: 'db_groups.name'},
-            {data: 'owner'              , name: 'mdb_equipment.owner'},
-            {data: 'primary_user'       , name: 'mdb_equipment.primary_user'},
+            {data: 'owner'              , name: 'equipment.owner'},
+            {data: 'primary_user'       , name: 'equipment.primary_user'},
             {data: 'os_name'            , name: 'db_os.name'},
             {data: 'processor'          , name: 'db_computer.processor',        "className": 'datatable-center-item'},
             {data: 'memory'             , name: 'db_computer.memory',           "className": 'datatable-center-item'},
             {data: 'harddrive'          , name: 'db_computer.harddrive',        "className": 'datatable-center-item'},
             {data: 'ip'                 , name: 'db_computer.ip'},
             {data: 'hostname'           , name: 'db_computer.hostname'},
-            {data: null                 , name: 'mdb_equipment.created_at',     "render" : function (data, type, full, meta ) { return data.created_at.split(' ')[0]; } },
-            {data: null                 , name: 'mdb_equipment.updated_at',     "render" : function (data, type, full, meta ) { return data.updated_at.split(' ')[0]; } }
+            {data: null                 , name: 'equipment.created_at',     "render" : function (data, type, full, meta ) { return data.created_at.split(' ')[0]; } },
+            {data: null                 , name: 'equipment.updated_at',     "render" : function (data, type, full, meta ) { return data.updated_at.split(' ')[0]; } }
 
 
         ],

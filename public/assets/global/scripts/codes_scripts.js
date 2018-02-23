@@ -23,7 +23,7 @@
                 }
             },
             columns: [
-                {data: 'name'               , name: 'mdb_domain.name'},
+                {data: 'name'               , name: 'domain.name'},
 
             ]
         });
@@ -59,7 +59,7 @@
                       return '<a data-toggle="modal" type="groups" item-id="'+data.id+'" item-value="'+data.name+'" href="#codes-modal"><i class="fa fa-cut" title="Edit"></i></a>  <a href="# Del" item-id="'+data.id+'" class="delete-record" onclick="confirm(\'Do you want to delete this record?\')"><i class="fa fa-remove" title="Delete"></a>';
                     }
                 },
-                {data: 'name'               , name: 'mdb_groups.name'},
+                {data: 'name'               , name: 'groups.name'},
                 {data: 'group_name'         , name: 'db_groups.name'},
                 {data: 'active_eq_count'    , name: 'db_equipment.active_eq_count'},
                 {data: 'inactive_eq_count'  , name: 'db_equipment.inactive_eq_count'},
@@ -98,7 +98,7 @@
                       return '<a data-toggle="modal" type="equipment_make" item-id="'+data.id+'" item-value="'+data.name+'" href="#codes-modal"><i class="fa fa-cut" title="Edit"></i></a>';
                     }
                 },
-                {data: 'name'               , name: 'mdb_equipment_make.name'},
+                {data: 'name'               , name: 'equipment_make.name'},
 
             ]
         });
@@ -134,7 +134,7 @@
                       return '<a data-toggle="modal" type="os" item-id="'+data.id+'" item-value="'+data.name+'" href="#codes-modal"><i class="fa fa-cut" title="Edit"></i></a>';
                     }
                 },
-                {data: 'name'               , name: 'mdb_os.name'},
+                {data: 'name'               , name: 'os.name'},
 
             ]
         });
@@ -163,7 +163,7 @@
                 }
             },
             columns: [
-                {data: 'name'               , name: 'mdb_buildings.name'},
+                {data: 'name'               , name: 'buildings.name'},
 
             ]
         });
@@ -192,7 +192,7 @@
                 }
             },
             columns: [
-                {data: 'name'               , name: 'mdb_equipment_type.name'},
+                {data: 'name'               , name: 'equipment_type.name'},
                 {data: 'active_eq_count'    , name: 'db_equipment.active_eq_count'},
                 {data: 'inactive_eq_count'  , name: 'db_equipment.inactive_eq_count'},
 
