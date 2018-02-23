@@ -49,11 +49,11 @@
                           return '<a href="'+mdb.basePath+'/user/edit/'+data.id+'">Edit</a> - <a href="# Del" item-id="'+data.id+'" class="delete-record" onclick="confirm(\'Do you want to delete this record?\')">Delete</a>';
                         }
                     },
-                    {data: 'unity_id'           , name: 'users.unity_id'},
-                    {data: 'first_name'         , name: 'users.first_name'},
-                    {data: 'middle_name'        , name: 'users.middle_name'},
-                    {data: 'last_name'          , name: 'users.last_name'},
-                    {data: 'email'              , name: 'users.email'},
+                    {data: 'unity_id'           , name: 'mdb_users.unity_id'},
+                    {data: 'first_name'         , name: 'mdb_users.first_name'},
+                    {data: 'middle_name'        , name: 'mdb_users.middle_name'},
+                    {data: 'last_name'          , name: 'mdb_users.last_name'},
+                    {data: 'email'              , name: 'mdb_users.email'},
                     {data: 'unit_name'          , name: 'db_groups.name'},
                     {data: 'access_name'        , name: 'db_users_access.name'},
 
