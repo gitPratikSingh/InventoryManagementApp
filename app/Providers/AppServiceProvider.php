@@ -14,9 +14,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // lists' is removed in Laravel 5.3
-        $units = Groups::where('is_unit', 1)->pluck('name', 'id');
-        view()->share('unitsList', $units);
+        
+        if (auth()->check()) {
+            $units = Groups::where('is_unit', 1)->pluck('name', 'id');
+            view()->share('unitsList', $units);
+        }
     }
 
     /**
