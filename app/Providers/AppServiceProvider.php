@@ -14,11 +14,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
-        if (auth()->check()) {
-            $units = Groups::where('is_unit', 1)->pluck('name', 'id');
-            view()->share('unitsList', $units);
-        }
+        view()->composer(['*'], function ($view) {
+            if (auth()->check()) {
+                $view->with('unitsList', Groups::where('is_unit', 1)->pluck('name', 'id'));
+            }
+        });
     }
 
     /**
