@@ -166,7 +166,39 @@
                                                 <th> Updated </th>
                                             </tr>
                                         </thead>
-                                        
+                                        <tfoot>
+                                           <tr>
+                                              <th><div title="Clear Filter" class="datatable-filter fa fa-filter"></div></th>
+                                              <th><input type="checkbox" id="select-every-checkbox"></th>
+                                              <th></th>
+                                              <th class="iconic-filter">
+                                                <div value= '' column='3'><i class="fa fa-thumbs-up font-green" title="No Filter"><span style="margin-left: -10px; color:red;">x</span></i></div>
+                                                <div value='1' column='3' selected="selected"><i class="fa fa-thumbs-up font-green" title="Active"></i></div>
+                                                <div value='0' column='3'><i class="fa fa-thumbs-down font-red" title="Inactive"></i></div>
+                                              </th>
+                                              <th class="iconic-filter">
+                                                <div value= '' column='4'><i class="fa fa-trash font-green" title="No Filter"><span style="margin-left: -10px; color:red;">x</span></i></div>
+                                                <div value='0' column='4' selected="selected"><i class="fa fa-trash font-green" title="Active"></i></div>
+                                                <div value='1' column='4'><i class="fa fa-trash font-red" title="Inactive"></i></div>
+                                              </th>
+                                              <th><input type="text"></th>
+                                              <th><input type="text"></th>
+                                              <th><input type="text"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                              <th><input type="text" class="free-width-input"></th>
+                                           </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
