@@ -327,7 +327,7 @@ class EquipmentController extends Controller
               return $this->getPopularItems($equpmentModel, 'buildings', 'building_id');
             }
         );
-        $data['buildings']['other']   = array_diff(Buildings::where("name", '!=', "")->orderBy('name', 'asc')->lists('name', 'id')->toArray(), $data['buildings']['popular']);
+        $data['buildings']['other']   = array_diff(Buildings::where("name", '!=', "")->orderBy('name', 'asc')->pluck('name', 'id')->toArray(), $data['buildings']['popular']);
 
         /* My Types Dropdown */
         $data['equipmentType']['popular'] = Cache::remember('equipmentTypePopular', $timeout,
@@ -335,7 +335,7 @@ class EquipmentController extends Controller
               return $this->getPopularItems($equpmentModel, 'equipment_type', 'type_id');
             }
         );
-        $data['equipmentType']['other']   = array_diff(EquipmentType::where("name", '!=', "")->orderBy('name', 'asc')->lists('name', 'id')->toArray(), $data['equipmentType']['popular']);
+        $data['equipmentType']['other']   = array_diff(EquipmentType::where("name", '!=', "")->orderBy('name', 'asc')->pluck('name', 'id')->toArray(), $data['equipmentType']['popular']);
 
         /* My Makes Dropdown */
         $data['make']['popular'] = Cache::remember('makePopular', $timeout,
@@ -343,12 +343,12 @@ class EquipmentController extends Controller
               return $this->getPopularItems($equpmentModel, 'equipment_make', 'make_id');
             }
         );
-        $data['make']['other']   = array_diff(EquipmentMake::where("name", '!=', "")->orderBy('name', 'asc')->lists('name', 'id')->toArray(), $data['make']['popular']);
+        $data['make']['other']   = array_diff(EquipmentMake::where("name", '!=', "")->orderBy('name', 'asc')->pluck('name', 'id')->toArray(), $data['make']['popular']);
 
 
-        $data['groups']           = Groups::where("name", '!=', "")->where('unit_id', $this->userData->unit_id)->lists('name', 'id');
-        $data['os']               = Os::where("name", '!=', "")->orderBy('name', 'asc')->lists('name', 'id');
-        $data['domain']           = Domains::where("name", '!=', "")->orderBy('name', 'asc')->lists('name', 'id');
+        $data['groups']           = Groups::where("name", '!=', "")->where('unit_id', $this->userData->unit_id)->pluck('name', 'id');
+        $data['os']               = Os::where("name", '!=', "")->orderBy('name', 'asc')->pluck('name', 'id');
+        $data['domain']           = Domains::where("name", '!=', "")->orderBy('name', 'asc')->pluck('name', 'id');
         //$data['users']            = Groups::find($this->userData->unit_id)->users->lists('unity_id', 'id');
 
         $equipmentID = Request::segment(3);
@@ -383,7 +383,7 @@ class EquipmentController extends Controller
       ->where("equipment.active", 1)
       ->leftJoin("{$coTable} as coTable", "coTable.id", '=', "equipment.{$column}")
       ->orderBy("coTable.name", 'asc')
-      ->lists('coTable.name', 'coTable.id')->toArray();
+      ->pluck('coTable.name', 'coTable.id')->toArray();
     }
 
     public function itemStatus()

@@ -142,7 +142,7 @@ class UserController extends Controller
             $data['pagename']   = 'Add New User';
         }
 
-        $data['accessList']      = UserAccess::where('id', '!=', 1)->lists('name', 'id');
+        $data['accessList']      = UserAccess::where('id', '!=', 1)->pluck('name', 'id');
 
         if($this->userData->access_id!=1){
             $oWhereU['id'] = $this->userData->unit_id;
@@ -152,8 +152,8 @@ class UserController extends Controller
         $oWhereG['is_unit'] = 0;
         // $oWhereG['is_department'] = 0;
 
-        $data['unitsList']       = Groups::where($oWhereU)->lists('name', 'id');
-        $data['groupsList']      = Groups::where($oWhereG)->lists('name', 'id');
+        $data['unitsList']       = Groups::where($oWhereU)->pluck('name', 'id');
+        $data['groupsList']      = Groups::where($oWhereG)->pluck('name', 'id');
 
         return view('forms.user_form', $data);
     }
