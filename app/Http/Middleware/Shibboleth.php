@@ -19,6 +19,7 @@ class Shibboleth
             if (app()->environment() == 'local') $unity_id = config('app.user');
             // Read the server variables
             $identifiers = preg_grep('/^(.+)?SHIB_UID$/', array_keys($request->server()));
+            dd($identifiers);
             if (count($identifiers)) $unity_id = $identifiers[0];
             // Redirect if no APP_USER or server variable
             if (!isset($unity_id)) return redirect('/login');
