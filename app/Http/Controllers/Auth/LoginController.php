@@ -36,4 +36,27 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    public function login()
+    {
+        return view('login');
+    }
+
+    public function shibboleth()
+    {
+        if (app()->environment() == 'local') {
+            return redirect('/');
+        } elseif (app()->environment() == 'production') {
+            $url = config('app.url');
+            $server = request()->server('SERVER_NAME');
+            return redirect()->away("https://{$server}/Shibboleth.sso/Login?target={$url}");
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        session()->flush();
+        auth()->logout();
+        return redirect()->route('login');
+    }
 }

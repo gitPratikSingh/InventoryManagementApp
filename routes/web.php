@@ -11,8 +11,14 @@
 |
 */
 
+Route::get('login', 'Auth\LoginController@login')->name('login');
+Route::get('shibboleth', 'Auth\LoginController@shibboleth')->name('shibboleth');
+Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+
 // Route::get('/', 'EquipmentController@index');
-Route::get('/', 'EquipmentController@login');
+// Route::get('/', 'EquipmentController@login');
+
+Route::group(['middleware' => 'shibboleth'], function() {
 
 /* Equipment */
 Route::get('equipment/', 'EquipmentController@index');
@@ -37,7 +43,7 @@ Route::get('user/delete/{id}', 'UserController@destroy');
 Route::post('user/save', 'UserController@saveItem');
 Route::post('user/getUserData', 'UserController@getUserData');
 Route::get('user/searchGroups', 'UserController@searchGroups');
-Route::get('logout', 'UserController@logout');
+// Route::get('logout', 'UserController@logout');
 Route::get('switch-unit/{id}', 'UserController@switchUnit');
 
 
@@ -71,3 +77,5 @@ Route::post('history/datatable', 'HistoryController@datatable');
 Route::get('service/lookup', 'ServiceController@lookup');
 Route::post('service/store', 'ServiceController@store');
 Route::get('service/store/processor', 'ServiceController@processor');
+
+});
