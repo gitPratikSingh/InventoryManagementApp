@@ -15,11 +15,8 @@ Route::get('login', 'Auth\LoginController@login')->name('login');
 Route::get('shibboleth', 'Auth\LoginController@shibboleth')->name('shibboleth');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout');
 
-// Route::get('/', 'EquipmentController@index');
-// Route::get('/', 'EquipmentController@login');
-
 Route::group(['middleware' => 'shibboleth'], function() {
-
+Route::get('/', 'EquipmentController@index');
 /* Equipment */
 Route::get('equipment/', 'EquipmentController@index');
 Route::get('equipment/export-to-excel', 'EquipmentController@exportToExcel');
