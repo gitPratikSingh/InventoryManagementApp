@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
@@ -26,7 +25,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -36,28 +35,5 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
-    }
-
-    public function login()
-    {
-        return view('displays.login');
-    }
-
-    public function shibboleth()
-    {
-        if (app()->environment() == 'local') {
-            return redirect('/');
-        } elseif (app()->environment() == 'production') {
-            $url = config('app.url');
-            $server = request()->server('SERVER_NAME');
-            return redirect()->away("https://{$server}/Shibboleth.sso/Login?target={$url}");
-        }
-    }
-
-    public function logout(Request $request)
-    {
-        session()->flush();
-        auth()->logout();
-        return redirect()->route('login');
     }
 }

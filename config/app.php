@@ -41,8 +41,6 @@ return [
 
     'debug' => env('APP_DEBUG', false),
 
-    'user' => env('APP_USER', null),
-
     /*
     |--------------------------------------------------------------------------
     | Application URL
@@ -57,11 +55,6 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     /*
-    | Super Users ID's
-    */
-    'superUsers' => array(2,3,8,12),
-
-    /*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
@@ -72,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => (isset($_SERVER['SERVER_NAME']) and  $_SERVER['SERVER_NAME'] =='tools.wolftech.ncsu.edu')?'EST':'UTC',
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -111,7 +104,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY', 'SomeRandomString'),
+    'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
 
@@ -158,8 +151,6 @@ return [
          * Package Service Providers...
          */
 
-        Barryvdh\Debugbar\ServiceProvider::class,
-
         /*
          * Application Service Providers...
          */
@@ -168,10 +159,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
-         /* Service Provider Added by Tauseef */
-         Collective\Html\HtmlServiceProvider::class,
-         Yajra\Datatables\DatatablesServiceProvider::class,
 
     ],
 
@@ -221,14 +208,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
-        /* Service Provider Added by Tauseef */
-        'Form' => Collective\Html\FormFacade::class,
-        'Html' => Collective\Html\HtmlFacade::class,
-        'Datatables' => yajra\Datatables\Datatables::class,
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-
-        'Debugbar' => Barryvdh\Debugbar\Facade::class,
 
     ],
 

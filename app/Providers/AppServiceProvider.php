@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Groups;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,11 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->composer(['*'], function ($view) {
-            if (auth()->check()) {
-                $view->with('unitsList', Groups::where('is_unit', 1)->pluck('name', 'id'));
-            }
-        });
+        //
     }
 
     /**

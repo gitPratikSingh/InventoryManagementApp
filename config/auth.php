@@ -78,32 +78,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Group Model
-    | --------------------------------------------------------------------------
-    |
-    | When using the "shibboleth" authentication driver, it requires that a
-    | group model is supported. Of course, it is often just the "Group" model
-    | but you may use whatever you like.
-    |
-    */
-
-    'group_model' => 'App\Group',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Table
-    |--------------------------------------------------------------------------
-    |
-    | When using the "Database" authentication driver, we need to know which
-    | table should be used to retrieve your users. We have chosen a basic
-    | default value but you may easily change it to any table you like.
-    |
-    */
-
-    'table' => 'users',
-
-    /*
-    |--------------------------------------------------------------------------
     | Resetting Passwords
     |--------------------------------------------------------------------------
     |
