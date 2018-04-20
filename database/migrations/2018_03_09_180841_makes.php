@@ -15,7 +15,7 @@ class Makes extends Migration
     {
         Schema::create('makes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 50)->nullable();
+            $table->string('name', 50)->nullable(true);
             $table->timestamp('deleted_at')->nullable(true);
         });
     }

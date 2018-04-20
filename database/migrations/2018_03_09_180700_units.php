@@ -16,7 +16,6 @@ class Units extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 50);
-            $table->string('oucs', 500);
             $table->string('acronym', 20)->nullable(true);
             $table->timestamp('deleted_at')->nullable(true);
         });

@@ -20,7 +20,7 @@ class DataMigration extends Command
      *
      * @var string
      */
-    protected $description = 'Migarte database!';
+    protected $description = 'Migrate database!';
 
     /**
      * Create a new command instance.
@@ -81,17 +81,46 @@ class DataMigration extends Command
         }
 
         // migrate the codes table
+        $dataNewEq = $connNEW->prepare("INSERT INTO makes(id, name, deleted_at) VALUES (0,'',NULL)");
+        $dataNewEq->execute();
+
         $dataOLD = $connOLD->prepare("SELECT * FROM codes_make");
         $dataOLD->execute();
         $results = $dataOLD->fetchAll();
         
-        $connNEW->prepare("INSERT INTO makes(id, name, deleted_at) VALUES (1,'N/A',NULL)")->execute();
-
         foreach($results as $r){
             $dataNewEq = $connNEW->prepare("INSERT INTO makes(id, name, deleted_at) VALUES (?,?,?)");
             $dataNewEq->execute(array($r['code'], $r['description'], NULL));
         }
+
+        $dataOLD = $connOLD->prepare("SELECT * FROM codes_domain");
+        $dataOLD->execute();
+        $results = $dataOLD->fetchAll();
         
+        foreach($results as $r){
+            $dataNewEq = $connNEW->prepare("INSERT INTO domains(id, name, deleted_at) VALUES (?,?,?)");
+            $dataNewEq->execute(array($r['code'], $r['description'], NULL));
+        }
+        
+        $dataOLD = $connOLD->prepare("SELECT * FROM units");
+        $dataOLD->execute();
+        $results = $dataOLD->fetchAll();
+                
+        foreach($results as $r){
+            $dataNewEq = $connNEW->prepare("INSERT INTO units(id, name) VALUES (?,?)");
+            $dataNewEq->execute(array($r['id'], $r['unit_name']));
+        }
+
+        $dataOLD = $connOLD->prepare("SELECT room, building FROM machines group by room, building");
+        $dataOLD->execute();
+        $results = $dataOLD->fetchAll();
+                
+        foreach($results as $r){
+            $dataNewEq = $connNEW->prepare("INSERT INTO rooms(building_id, number) VALUES (?,?)");
+            $dataNewEq->execute(array($r['building'], $r['room']));
+        }
+
+        /*
         $dataOLD = $connOLD->prepare("select building, room from machines group by building, room");
         $dataOLD->execute();
         $results = $dataOLD->fetchAll();
@@ -107,33 +136,31 @@ class DataMigration extends Command
             $dataNewEq->execute(array($idx, $r['building'], $r['room']));
             $locationhashmap[$r['building'].','.$r['room']] = $idx;
         }
+        */
 
         // migrate the codes table
-        $dataOLD = $connOLD->prepare("SELECT distinct upper(trim(model)) as model FROM machines");
+        $dataOLD = $connOLD->prepare("select m.model, m.make from machines m group by m.model, m.make");
         $dataOLD->execute();
         $results = $dataOLD->fetchAll();
         
         $modelhashmap = array();
-
-        $connNEW->prepare("INSERT INTO models(id, name, deleted_at) VALUES (1,'N/A',NULL)")->execute();
-        $modelhashmap['N/A'] = 1;
         
-        $idx=1;
+        $idx=0;
         foreach($results as $r){
-            if ($r['model']!='' 
-             && $r['model']!='NA'
-             && $r['model']!='?'
-             && $r['model']!='-- NONE --'
-             && $r['model']!='N/A') {
-                $idx=$idx+1;
-                $dataNewEq = $connNEW->prepare("INSERT INTO models(id, name, deleted_at) VALUES (?,?,?)");
-                $dataNewEq->execute(array($idx, trim($r['model']), null));
-                $modelhashmap[$r['model']] = $idx;
-            }else{
-                $modelhashmap[$r['model']] = 1;
-            }
+            $idx=$idx+1;
+            $r['make'] = $r['make'] == 0? 1: $r['make'];
+            $dataNewEq = $connNEW->prepare("INSERT INTO models(id, name, make_id, deleted_at) VALUES (?,?,?,?)");
+            $dataNewEq->execute(array($idx, $r['model'], $r['make'], null));
+            $modelhashmap[$r['model'].','.$r['make']] = $idx;
+            $modelhashmap[ucwords($r['model']).','.$r['make']] = $idx;
+            $modelhashmap[strtolower($r['model']).','.$r['make']] = $idx;
+            $modelhashmap[strtoupper($r['model']).','.$r['make']] = $idx;
+            $modelhashmap[strtoupper(trim($r['model'])).','.$r['make']] = $idx;
         }
 
+        //echo '<pre>';
+        //print_r($modelhashmap);
+        //echo '</pre>';
         // devices types
         // migrate the codes table
         $dataOLD = $connOLD->prepare("SELECT code, description, 
@@ -149,7 +176,7 @@ class DataMigration extends Command
 
         foreach($results as $r){
 
-            $dataNewEq = $connNEW->prepare("INSERT INTO devices_types(id, name, category, deleted_at) VALUES (?,?,?,?)");
+            $dataNewEq = $connNEW->prepare("INSERT INTO devices_types(id, minor, major, deleted_at) VALUES (?,?,?,?)");
             $dataNewEq->execute(array(trim($r['code']), trim($r['description']), $r['category'], NULL));
             $categoryhashmap[trim($r['code'])] = $r['category'];
 
@@ -166,6 +193,28 @@ class DataMigration extends Command
             $vendorhashmap[$r['code']] = $r['description'];
         }
 
+        $dataOLD = $connOLD->prepare("SELECT * FROM codes_os");
+        $dataOLD->execute();
+        $results = $dataOLD->fetchAll();
+        
+        $oshashmap = array();
+        $oshashmap[0] = '';
+
+        foreach($results as $r){
+            $oshashmap[$r['code']] = $r['description'];
+        }
+
+        $dataOLD = $connOLD->prepare("SELECT * FROM codes_kernel");
+        $dataOLD->execute();
+        $results = $dataOLD->fetchAll();
+        
+        $kernelhashmap = array();
+        $kernelhashmap[0] = '';
+
+        foreach($results as $r){
+            $kernelhashmap[$r['code']] = $r['description'];
+        }
+
         //devices table, machines table
         $dataOLD = $connOLD->prepare("SELECT * FROM machines");
         $dataOLD->execute();
@@ -179,75 +228,100 @@ class DataMigration extends Command
             return $d && $d->format($format) == $date;
         }
 
-        foreach($results as $r){
-
+        foreach ($results as $r) {
             $dataNewEq = $connNEW->prepare("
-            INSERT INTO devices(id, category, type_id, make_id, model_id, serial_number, unit_id, owner, location_id,
-            user, network_name, surplussed_at, created_at, updated_at, deleted_at) 
+            INSERT INTO devices(id, name, serial_number, cams_tag, type_id, make_id,
+            model_id, unit_id, owner, user, building_id, location_id, created_at, updated_at, deleted_at) 
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             
-            $r['createDate'] = $r['createDate']=="0000-00-00"?($r['purchased']=="0000-00-00"?($r['date_mod']=="0000-00-00"?NULL:$r['date_mod']):$r['purchased']):$r['createDate'];
-            $r['surplusDate'] = $r['surplusDate']=="0000-00-00"?NULL:$r['surplusDate'];
-            $r['date_mod'] = $r['date_mod']=="0000-00-00"?NULL:$r['date_mod'];
-            $r['retireDate']=="0000-00-00"?NULL:$r['retireDate'];
-            $r['purchased'] = $r['purchased']=="0000-00-00"?NULL:$r['purchased'];
+            $r['createDate'] = $r['createDate']=="0000-00-00"?($r['purchased']=="0000-00-00"?($r['date_mod']=="0000-00-00"?null:$r['date_mod']):$r['purchased']):$r['createDate'];
+            $r['surplusDate'] = $r['surplusDate']=="0000-00-00"?null:$r['surplusDate'];
+            $r['date_mod'] = $r['date_mod']=="0000-00-00"?null:$r['date_mod'];
+            $r['retireDate']=="0000-00-00"?null:$r['retireDate'];
+            $r['purchased'] = $r['purchased']=="0000-00-00"?null:$r['purchased'];
+            $r['make'] = $r['make'] == 0?1:$r['make'];
+            $model = array_key_exists($r['model'].','.$r['make'], $modelhashmap)?$modelhashmap[$r['model'].','.$r['make']]:array_key_exists(strtoupper($r['model'].','.$r['make']), $modelhashmap)?$modelhashmap[strtoupper($r['model'].','.$r['make'])]:$modelhashmap[strtoupper(trim($r['model']).','.$r['make'])];
 
-            if(validateDate($r['createDate'])==FALSE)
-                $r['createDate'] = NULL;
-            if(validateDate($r['surplusDate'])==FALSE)
-                $r['surplusDate'] = NULL;
-            if(validateDate($r['date_mod'])==FALSE)
-                $r['date_mod'] = NULL;
-            if(validateDate($r['retireDate'])==FALSE)
-                $r['retireDate'] = NULL;
-            if(validateDate($r['purchased'])==FALSE)
-                $r['purchased'] = NULL;
+            if (validateDate($r['createDate'])==false) {
+                $r['createDate'] = null;
+            }
+            if (validateDate($r['surplusDate'])==false) {
+                $r['surplusDate'] = null;
+            }
+            if (validateDate($r['date_mod'])==false) {
+                $r['date_mod'] = null;
+            }
+            if (validateDate($r['retireDate'])==false) {
+                $r['retireDate'] = null;
+            }
+            if (validateDate($r['purchased'])==false) {
+                $r['purchased'] = null;
+            }
             
-            
-            $r['model'] = strtoupper(trim($r['model']));
-            $r['building'] = strtoupper(trim($r['building']));
-            $r['room'] = strtoupper(trim($r['room']));
-
-            #special handling for a case
+            #special handling for an unknown character encoding in the machine.model field
             if (preg_match('/^USB 3.0 SUPERSPEED/', $r['model']) || preg_match('/DUAL VIDE$/', $r['model'])) {
                 $r['model'] = 'USB 3.0 SUPERSPEED DUAL VIDEO';
             }
 
-            $dataNewEq->execute(array($r['id'], 
-            $categoryhashmap[$r['type']], $r['type'], $r['make']==0?1:$r['make'],
-            $modelhashmap[$r['model']], $r['serialnum'], $r['unit'], $r['owner'], $locationhashmap[$r['building'].','.$r['room']],
-            $r['contact'],$r['name'], $r['surplusDate'],$r['createDate'],$r['date_mod'],$r['retireDate']));
+            $dataNewEq->execute(array($r['id'], $r['name'], $r['serialnum'], $r['cams'],
+            $r['type'], $r['make'], $model, $r['unit'], $r['owner'], $r['contact'], 
+            $r['building'], NULL, $r['createDate'],$r['date_mod'],$r['retireDate']));
 
-
+            // devices notes
             $dataNewEq = $connNEW->prepare("
-            INSERT INTO devices_purchases(device_id,vendor,account,quote_number,order_number,price,date_purchased,created_at,updated_at,deleted_at) 
-            VALUES (?,?,?,?,?,?,?,?,?,?)");
-            $dataNewEq->execute(array($r['id'], $vendorhashmap[$r['reseller']], $r['acct'], $r['quote'], $r['po'], $r['price'], $r['purchased'], $r['createDate'], $r['date_mod'], $r['retireDate']));
-
-
-            $dataNewEq = $connNEW->prepare("
-            INSERT INTO notes(device_id,note) 
+            INSERT INTO devices_notes(device_id,note) 
             VALUES (?,?)");
             $dataNewEq->execute(array($r['id'], trim(preg_replace('/\s\s+/', ' ', $r['notes']))));
 
-            if($r['config']!=''):
+            if ($r['config']!=''):
                 $dataNewEq = $connNEW->prepare("
-                INSERT INTO notes(device_id,note) 
+                INSERT INTO devices_notes(device_id,note) 
                 VALUES (?,?)");
-                $dataNewEq->execute(array($r['id'],trim(preg_replace('/\s\s+/', ' ', $r['config']))));
+            $dataNewEq->execute(array($r['id'],trim(preg_replace('/\s\s+/', ' ', $r['config']))));
             endif;
-            
-            /*
-            if($r['speed']!=''){
+
+            // devices_purchases
+            $dataNewEq = $connNEW->prepare("
+            INSERT INTO devices_purchases(device_id,vendor,account,quote_number,order_number,price,ordered_at,created_at,updated_at,deleted_at) 
+            VALUES (?,?,?,?,?,?,?,?,?,?)");
+            $dataNewEq->execute(array($r['id'], $vendorhashmap[$r['reseller']], $r['acct'], $r['quote'], $r['po'], $r['price'], $r['purchased'], $r['createDate'], $r['date_mod'], $r['retireDate']));
+           
+            //devices_warranties
+            if (intval($r['warranty'])!=0) {
                 $dataNewEq = $connNEW->prepare("
-                INSERT INTO devices_details(device_id,data,created_at,updated_at,deleted_at) 
-                VALUES (?,?,?,?,?,?,?)");
-                $dataNewEq->execute(array($r['id'], 'speed'.':'.$r['speed'], $r['createDate'], $r['date_mod'], $r['retireDate']));
+                INSERT INTO devices_warranties(device_id,expires_at,created_at,updated_at,deleted_at) 
+                VALUES (?,?,?,?,?)");
+                $expiration = ($r['purchased']==NULL||intval($r['warranty'])==0)?NULL:date("Y-m-d H:i:s", strtotime("+".intval($r['warranty'])." years", strtotime($r['purchased'])));
+                $dataNewEq->execute(array($r['id'], $expiration, $r['createDate'], $r['date_mod'], $r['retireDate']));
             }
-            */
+
+            //devices_processors
+            if (intval($r['os'])!=0 || intval($r['kernel'])) {
+                $dataNewEq = $connNEW->prepare("
+                INSERT INTO devices_operating_systems(device_id,caption,kernel,created_at,updated_at,deleted_at) 
+                VALUES (?,?,?,?,?,?)");
+                $dataNewEq->execute(array($r['id'], $oshashmap[$r['os']], $kernelhashmap[$r['kernel']], $r['createDate'], $r['date_mod'], $r['retireDate']));
+            }
+
+            //devices_network_adapters
+            $dataNewEq = $connNEW->prepare("
+            INSERT INTO devices_network_adapters(device_id,mac_address,ip_address,domain_id,host_name,created_at,updated_at,deleted_at) 
+            VALUES (?,?,?,?,?,?,?,?)");
+            $dataNewEq->execute(array($r['id'], $r['ethernet'], $r['ip'], $r['domain'], $r['hostid'], $r['createDate'], $r['date_mod'], $r['retireDate']));
+            
+            $dataNewEq = $connNEW->prepare("
+            INSERT INTO devices_memories(device_id,capacity,created_at,updated_at,deleted_at) 
+            VALUES (?,?,?,?,?)");
+            $dataNewEq->execute(array($r['id'], $r['memory'], $r['createDate'], $r['date_mod'], $r['retireDate']));
+            
+            $dataNewEq = $connNEW->prepare("
+            INSERT INTO devices_disk_drives(device_id,size,created_at,updated_at,deleted_at) 
+            VALUES (?,?,?,?,?)");
+            $dataNewEq->execute(array($r['id'], $r['hd'], $r['createDate'], $r['date_mod'], $r['retireDate']));
+            
         }
 
-        $this->info("Migarte database Success!");
+        $this->info("Migration completed!");
         return 0;
     }
 }

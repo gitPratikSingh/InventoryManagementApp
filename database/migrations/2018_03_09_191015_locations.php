@@ -15,9 +15,10 @@ class Locations extends Migration
     {
         Schema::create('locations', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('building_number', 50);
-            $table->string('room_number', 50);
-
+            $table->integer('room_id')->unsigned();
+            $table->string('name', 50);
+            $table->timestamp('deleted_at')->nullable(true);            
+            
             #$table->foreign('building_id', 'foreign_key_locations_building_id')->references('id')->on('buildings');
         });
     }

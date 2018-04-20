@@ -16,10 +16,12 @@ class Buildings extends Migration
         Schema::create('buildings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code', 50);
-            $table->string('name', 50);
-            $table->string('address', 100);
-            $table->string('city', 50);
-            $table->string('zip', 10);
+            $table->string('name', 50)->nullable(true);
+            $table->string('address', 100)->nullable(true);
+            $table->string('city', 50)->nullable(true);
+            $table->string('zip', 10)->nullable(true);
+            $table->string('latitude', 50)->nullable(true);
+            $table->timestamp('deleted_at')->nullable(true);
         });
     }
 

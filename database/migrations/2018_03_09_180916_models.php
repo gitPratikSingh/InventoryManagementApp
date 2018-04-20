@@ -15,11 +15,11 @@ class Models extends Migration
     {
         Schema::create('models', function (Blueprint $table) {
             $table->increments('id');
-            //$table->integer('makes_id')->unsigned();
-            $table->string('name', 50);
+            $table->integer('make_id')->unsigned()->nullable(true);
+            $table->string('name', 50)->nullable(true) ;
             $table->timestamp('deleted_at')->nullable(true);
 
-           // $table->foreign('makes_id', 'foreign_key_models_make_id')->references('id')->on('makes');
+            $table->foreign('make_id', 'foreign_key_models_make_id')->references('id')->on('makes');
 
         });
     }
@@ -30,7 +30,12 @@ class Models extends Migration
      * @return void
      */
     public function down()
-    {
+    {   
+        Schema::table('models', function(Blueprint $table)
+		{
+            $table->dropForeign('foreign_key_models_make_id');
+        });
+
         Schema::dropIfExists('models');
     }
 }

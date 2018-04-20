@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DevicesDetails extends Migration
+class DevicesWarranties extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class DevicesDetails extends Migration
      */
     public function up()
     {
-        Schema::create('devices_details', function (Blueprint $table) {
+        Schema::create('devices_warranties', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('device_id')->unsigned();
-            $table->string('category', 50);
-            $table->string('component', 100);
-            $table->text('data')->nullable();
+            $table->date('expires_at')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
-            $table->foreign('device_id', 'foreign_key_devices_details_device_id')->references('id')->on('devices');
+
+            $table->foreign('device_id', 'foreign_key_devices_warranties_device_id')->references('id')->on('devices');
         });
     }
 
@@ -32,11 +32,9 @@ class DevicesDetails extends Migration
      */
     public function down()
     {
-        Schema::table('devices_details', function(Blueprint $table)
-		{
-            $table->dropForeign('foreign_key_devices_details_device_id');
+        Schema::table('devices_warranties', function (Blueprint $table) {
+            $table->dropForeign('foreign_key_devices_warranties_device_id');
         });
-
-        Schema::dropIfExists('devices_details');
+        Schema::dropIfExists('devices_warranties');
     }
 }

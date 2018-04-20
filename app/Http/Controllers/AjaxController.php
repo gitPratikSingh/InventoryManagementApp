@@ -3,62 +3,77 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Records;
 use App\Devices;
+use App\UsersPreferences;
 
 use DB;
+use Carbon\Carbon;
 
 class AjaxController extends Controller
 {
     public function get(Request $request)
     {
         $data = $request->all(); // This will get all the request data.
-        $devices = DB::table('devices')
-                    ->join('makes', 'devices.make_id' , '=',  'makes.id')
-                    ->join('models', 'devices.model_id', '=', 'models.id')
-                    ->leftjoin('units', 'devices.unit_id', '=', 'units.id')
-                    ->select('devices.*', 'makes.name as make_name', 'models.name as model_name', 'units.name as unit_name')
-                    ->get();
-
-        $userPref = DB::table('users_preferences')->select('users_preferences.preferences')->get();
-
-        return  $data;
+        
+        return Devices::all();
     }
 
 
     public function delete(Request $request)
     {
         $data = $request->all();
-        error_log(print_r($data['id'], true));
         $deletedIds = $data['id'];
-        if(!empty($deletedIds))
-        DB::table('devices')->whereIn('id', $deletedIds)->delete();
+        
+        error_log(print_r($deletedIds, true));
 
-        return  $data;
+        if (!empty($deletedIds)) {
+            $devices = Devices::whereIn('id', $deletedIds);
+            
+            foreach ($devices as $device) {
+                $device->softDeletes();
+            }
+        }
+    }
+
+    public function undodelete(Request $request)
+    {
+        $data = $request->all();
+        $deletedIds = $data['id'];
+
+        if (!empty($deletedIds)) {
+            $devices = Devices::whereIn('id', $deletedIds);
+            
+            foreach ($devices as $device) {
+                $device->restore();
+            }
+        }
     }
 
     public function post(Request $request)
     {
        
-        $columnpreferences = $request['param'];
+        DB::enableQueryLog(); 
+        $columnpreferences = $request->input('param');
 
-        if (! empty(json_decode($request['param'], true))) {
-            DB::update('update users_preferences set preferences = ? where user_id = ?', [$request['param'], 1]);
-        }else{
-            error_log("Empty Request!");
-            $columnpreferences = DB::table('users_preferences')->select('users_preferences.preferences')->get()[0];
-            $columnpreferences = $columnpreferences->preferences;
+        $user_id = 1;
+        $userpref = UsersPreferences::where('user_id', $user_id)->first();        
+
+        if ($columnpreferences != '{}') {
+            $userpref->preferences = $columnpreferences;
+            $userpref->save();
         }
 
         $records = json_encode(
             DB::table('devices')
                     ->join('makes', 'devices.make_id' , '=',  'makes.id')
                     ->join('models', 'devices.model_id', '=', 'models.id')
-                    ->leftjoin('units', 'devices.unit_id', '=', 'units.id')
-                    ->select('devices.*', 'makes.name as make_name', 'models.name as model_name', 'units.name as unit_name')
+                    ->join('units', 'devices.unit_id', '=', 'units.id')
+                    ->join('devices_purchases', 'devices.id', '=', 'devices_purchases.device_id')
+                    ->select(DB::raw("devices.*, if(devices.deleted_at IS NULL, 2, 1) as status, makes.name as make_name, models.name as model_name, units.name as unit_name
+                    , devices_purchases.ordered_at as purchase_date"))
                     ->get()
         );
-
-        return view('ajax.default', ['ajaxData' => $records, 'columnpreferences' => $columnpreferences]);
+        
+        return view('ajax.default', ['ajaxData' => $records, 'columnpreferences' => $userpref->preferences]);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Notes extends Migration
+class DevicesNotes extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class Notes extends Migration
      */
     public function up()
     {
-        Schema::create('notes', function (Blueprint $table) {
+        Schema::create('devices_notes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('device_id')->unsigned();
             $table->integer('created_by')->unsigned()->nullable();
@@ -35,11 +35,11 @@ class Notes extends Migration
      */
     public function down()
     {
-        Schema::table('notes', function (Blueprint $table) {
+        Schema::table('devices_notes', function (Blueprint $table) {
             $table->dropForeign('foreign_key_notes_created_by');
             $table->dropForeign('foreign_key_notes_device');
         });
 
-        Schema::dropIfExists('notes');
+        Schema::dropIfExists('devices_notes');
     }
 }

@@ -69,6 +69,5 @@ class TruncateDB extends Command
             $this->error("Database truncate command didn\'t finish properly: ".$e->getMessage());
             return 2;
         }
-        $this->comment("All tables were truncated");
     }
 }
